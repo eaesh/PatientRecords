@@ -20,16 +20,23 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        // GET: api/Patients
+        /// <summary>
+        /// Get all patient records
+        /// </summary>
+        /// <returns>List of patients</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
         {
             return await _context.Patients.ToListAsync();
         }
 
-        // GET: api/Patients/5
+        /// <summary>
+        /// Get Patient by ID
+        /// </summary>
+        /// <param name="id">Patient ID</param>
+        /// <returns>Patient record</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Patient>> GetPatient(long id)
+        public async Task<ActionResult<Patient>> GetPatient(int id)
         {
             var patient = await _context.Patients.FindAsync(id);
 
@@ -41,10 +48,14 @@ namespace Backend.Controllers
             return patient;
         }
 
-        // PUT: api/Patients/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update Patient by ID
+        /// </summary>
+        /// <param name="id">Patient ID</param>
+        /// <param name="patient">Patient record</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPatient(long id, Patient patient)
+        public async Task<IActionResult> PutPatient(int id, Patient patient)
         {
             if (id != patient.Id)
             {
@@ -72,20 +83,49 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-        // POST: api/Patients
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Patient>> PostPatient(Patient patient)
-        {
-            _context.Patients.Add(patient);
-            await _context.SaveChangesAsync();
+        /// <summary>
+        /// Create new patient
+        /// </summary>
+        /// <param name="patient">Patient details in request body</param>
+        /// <returns>ID of created patient</returns>
+        //[HttpPost]
+        //public async Task<ActionResult<Patient>> PostPatient(Patient patient)
+        //{
+        //    _context.Patients.Add(patient);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPatient", new { id = patient.Id }, patient);
+        //    return CreatedAtAction("GetPatient", new { id = patient.Id }, patient);
+        //}
+
+        [HttpPost]
+        public async Task<ActionResult> PostPatients(List<Patient> patients)
+        {
+            // iterate through all patients
+            // check if id already exists
+            try
+            {
+                // Auto increment id 
+                patients.ForEach(p => p.Id = 0);
+                _context.Patients.AddRange(patients);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return Ok();
         }
 
-        // DELETE: api/Patients/5
+
+
+        /// <summary>
+        /// Delete patient by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePatient(long id)
+        public async Task<IActionResult> DeletePatient(int id)
         {
             var patient = await _context.Patients.FindAsync(id);
             if (patient == null)
