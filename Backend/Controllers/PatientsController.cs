@@ -83,29 +83,11 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Create new patient
-        /// </summary>
-        /// <param name="patient">Patient details in request body</param>
-        /// <returns>ID of created patient</returns>
-        //[HttpPost]
-        //public async Task<ActionResult<Patient>> PostPatient(Patient patient)
-        //{
-        //    _context.Patients.Add(patient);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetPatient", new { id = patient.Id }, patient);
-        //}
-
         [HttpPost]
         public async Task<ActionResult> PostPatients(List<Patient> patients)
         {
-            // iterate through all patients
-            // check if id already exists
             try
             {
-                // Auto increment id 
-                patients.ForEach(p => p.Id = 0);
                 _context.Patients.AddRange(patients);
                 await _context.SaveChangesAsync();
             }
@@ -116,8 +98,6 @@ namespace Backend.Controllers
 
             return Ok();
         }
-
-
 
         /// <summary>
         /// Delete patient by id
@@ -134,6 +114,19 @@ namespace Backend.Controllers
             }
 
             _context.Patients.Remove(patient);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Temporary method for testing - REMOVE
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAllPatients()
+        {
+            _context.Patients.RemoveRange(_context.Patients);
             await _context.SaveChangesAsync();
 
             return NoContent();

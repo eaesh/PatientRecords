@@ -22,8 +22,14 @@ namespace Backend
         {
 
             services.AddControllers();
-            services.AddDbContext<PatientRecordsContext>(opt =>
-                opt.UseInMemoryDatabase("PatientRecords"));
+            // Connection string defined in appsettings.json
+            services.AddDbContext<PatientRecordsContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // InMemory Database is volatile - REMOVED
+            //services.AddDbContext<PatientRecordsContext>(opt =>
+            //    opt.UseInMemoryDatabase("PatientRecords"));
+
             //services.AddSwaggerGen(c =>
             //{
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });

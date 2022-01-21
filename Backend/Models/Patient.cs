@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models
 {
@@ -11,6 +12,7 @@ namespace Backend.Models
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [DataType(DataType.Date)]
         public DateTime Birthday { get; set; }
         public Gender Gender { get; set; }
     }
