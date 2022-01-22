@@ -25,27 +25,17 @@ namespace Backend.Controllers
         /// </summary>
         /// <returns>List of patients</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
+        public async Task<ActionResult<IEnumerable<dynamic>>> GetPatients()
         {
-            return await _context.Patients.ToListAsync();
-        }
-
-        /// <summary>
-        /// Get Patient by ID
-        /// </summary>
-        /// <param name="id">Patient ID</param>
-        /// <returns>Patient record</returns>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Patient>> GetPatient(int id)
-        {
-            var patient = await _context.Patients.FindAsync(id);
-
-            if (patient == null)
-            {
-                return NotFound();
-            }
-
-            return patient;
+            return await _context.Patients
+                .Select(p => new
+                {
+                    id = p.Id,
+                    firstName = p.FirstName,
+                    lastName = p.LastName,
+                    birthday = p.Birthday.ToString("yyyy-MM-dd"),
+                    gender = p.Gender.ToString()
+                }).ToListAsync();
         }
 
         /// <summary>

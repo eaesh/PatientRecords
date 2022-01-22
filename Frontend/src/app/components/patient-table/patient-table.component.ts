@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { CdkTable } from '@angular/cdk/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTable } from '@angular/material/table';
+
+import { Patient } from '../../models/patient';
+import { PatientService } from '../../services/patient.service';
 
 @Component({
   selector: 'patient-table',
@@ -6,25 +11,29 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./patient-table.component.css']
 })
 export class PatientTableComponent implements OnInit {
-  // change birthday to string for date only
-  columns: string[] = [ 'firstName', 'lastName', 'birthday', 'gender' ]
-  patientRecords = [
-    { firstName: 'Fudge', lastName: 'Cake', birthday: new Date('2020-01-01'), gender: 'M' },
-    { firstName: 'Foo', lastName: 'Bar', birthday: new Date('1990-12-24'), gender: 'F' }
-  ];
+  @ViewChild(MatTable) table!: MatTable<Patient>;
 
-  constructor() {
+  columns: string[] = ['firstName', 'lastName', 'birthday', 'gender'] // order of columns displayed on table
+  patientRecords: any = []      // data source for table
+
+  constructor(private patientService: PatientService) {
   }
-
+  
   ngOnInit(): void {
-
+    this.getPatients();
   }
-}
 
+  getPatients(): void {
+    // Get patients from patient service
+    this.patientService.getPatients()
+      .subscribe(patients => {
+        this.patientRecords = patients;
 
-export interface Patient {
-  firstName: string;
-  lastName: string;
-  birthday: Date;
-  gender: string;
+        // refresh table
+        this.table.renderRows();
+      }, error => console.error(error));
+
+    // Retry every 5in case of gateway timeout 504 (backend server still initiaiizing)
+    // show loading message with circle animation 
+  }
 }
