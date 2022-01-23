@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
 
 import { Patient } from '../models/patient';
 
@@ -18,8 +19,18 @@ export class PatientService {
   constructor(private http: HttpClient) { }
 
   getPatients(): Observable<Patient[]> {
-    //return of(this.mockPatients);
     return this.http.get<Patient[]>(this.patientsUrl);
   }
 
+  uploadPatientsFile(file: string): Observable<unknown> {
+    console.log(file)
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.post(this.patientsUrl + "/upload", JSON.stringify(file), httpOptions);
+  }
 }

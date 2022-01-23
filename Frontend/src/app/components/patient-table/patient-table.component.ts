@@ -1,4 +1,5 @@
 import { CdkTable } from '@angular/cdk/table';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable } from '@angular/material/table';
 
@@ -20,7 +21,7 @@ export class PatientTableComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.getPatients();
+    console.log(this.getPatients());
   }
 
   getPatients(): void {
@@ -35,5 +36,9 @@ export class PatientTableComponent implements OnInit {
 
     // Retry every 5in case of gateway timeout 504 (backend server still initiaiizing)
     // show loading message with circle animation 
+  }
+
+  test() {
+    console.log("test")
   }
 }

@@ -89,6 +89,62 @@ namespace Backend.Controllers
             return Ok();
         }
 
+        [HttpPost("upload")]
+        public async Task<ActionResult> UploadPatientsFile([FromBody]string file)
+        {
+            string[] records = file.Split(new string[] { "\r\n", "\r", "\n" },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            try
+            {
+                // Iterate through records
+                foreach (string rec in records)
+                {
+                    // Retrieve values from record
+                    string[] record = rec.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(r => r.Trim()).ToArray();
+                    if (record.Length < 4)
+                    {
+                        // Incomplete record
+                        throw new ArgumentException("Incomplete record");
+                    }
+
+                    // Transform record
+
+                    // Birthday
+                    if (!DateTime.TryParse(record[2], out DateTime birthday))
+                        throw new ArgumentException("Invalid birthday");
+
+                    // Gender
+                    Gender gender;
+                    if (record[3].Trim() == "M")
+                        gender = Gender.Male;
+                    else if (record[3].Trim() == "F")
+                        gender = Gender.Female;
+                    else
+                        throw new ArgumentException("Invalid gender");
+                    
+                    // Add to database
+                    _context.Patients.Add(new Patient
+                    {
+                        FirstName = record[0],
+                        LastName = record[1],
+                        Birthday = birthday,
+                        Gender = gender
+                    });
+                }
+
+                // Save context
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity(ex);
+            }
+
+            return Ok();
+        }
+
         /// <summary>
         /// Delete patient by id
         /// </summary>
@@ -110,7 +166,7 @@ namespace Backend.Controllers
         }
 
         /// <summary>
-        /// Temporary method for testing - REMOVE
+        /// TEST METHOD - REMOVE AFTER
         /// </summary>
         /// <returns></returns>
         [HttpDelete]

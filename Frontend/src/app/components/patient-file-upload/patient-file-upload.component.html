@@ -1,0 +1,5 @@
+
+<button type="button" (click)="fileInput.click()">
+  <span>Upload File</span>
+  <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
+</button>
