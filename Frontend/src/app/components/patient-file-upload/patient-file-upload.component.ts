@@ -1,4 +1,4 @@
-import { Input, OnInit } from "@angular/core";
+import { EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Component } from "@angular/core";
 import { PatientService } from "../../services/patient.service";
 
@@ -10,7 +10,7 @@ import { PatientService } from "../../services/patient.service";
   styleUrls: []
 })
 export class PatientFileUpload implements OnInit {
-  @Input() testFunction!: () => void;
+  @Output() fileUpload = new EventEmitter<any>();
 
   reader: FileReader = new FileReader();
 
@@ -21,8 +21,6 @@ export class PatientFileUpload implements OnInit {
     this.reader.onload = (e) => {
       this.uploadFile(this.reader.result?.toString());
     }
-
-    this.testFunction();
   }
 
   //handle file upload event
@@ -33,14 +31,15 @@ export class PatientFileUpload implements OnInit {
 
     // read file
     this.reader.readAsText(file);
-
   }
 
   // post file content to backend
   uploadFile(records: string | undefined) {
     if (records) {
       this.patientService.uploadPatientsFile(records.substring(records.indexOf('\n') + 1))
-        .subscribe(res => { }, error => console.error(error));
+        .subscribe(res => {
+          this.fileUpload.emit();
+        }, error => console.error(error));
     }
     else {
       console.error("Invalid File Content")

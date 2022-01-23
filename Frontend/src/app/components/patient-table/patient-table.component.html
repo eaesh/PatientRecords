@@ -1,28 +1,28 @@
-<patient-file-upload [testFunction]="test"></patient-file-upload>
+<patient-file-upload (fileUpload)="onFileUpload()"></patient-file-upload>
 
-<table mat-table [dataSource]="patientRecords">
+<table mat-table [dataSource]="patientRecords" matSort>
   <!-- ID -->
   <!-- First Name -->
   <ng-container matColumnDef="firstName">
-    <th mat-header-cell *matHeaderCellDef> First </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> First </th>
     <td mat-cell *matCellDef="let patient"> {{patient.firstName}} </td>
   </ng-container>
 
   <!-- Last Name -->
   <ng-container matColumnDef="lastName">
-    <th mat-header-cell *matHeaderCellDef> Last </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Last </th>
     <td mat-cell *matCellDef="let patient"> {{patient.lastName}} </td>
   </ng-container>
 
   <!-- Birthday -->
   <ng-container matColumnDef="birthday">
-    <th mat-header-cell *matHeaderCellDef> Birthday (yyyy-mm-dd) </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Birthday (yyyy-mm-dd) </th>
     <td mat-cell *matCellDef="let patient"> {{patient.birthday}} </td>
   </ng-container>
 
   <!-- Gender -->
   <ng-container matColumnDef="gender">
-    <th mat-header-cell *matHeaderCellDef> Gender </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
     <td mat-cell *matCellDef="let patient"> {{patient.gender}} </td>
   </ng-container>
 
