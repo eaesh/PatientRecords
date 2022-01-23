@@ -18,7 +18,7 @@ export class PatientTableComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  columns: string[] = ['firstName', 'lastName', 'birthday', 'gender'] // order of columns displayed on table
+  columns: string[] = ['id', 'firstName', 'lastName', 'birthday', 'gender'] // order of columns displayed on table
   patientRecords: MatTableDataSource<Patient> = new MatTableDataSource<Patient>();   // data source for table
 
   constructor(private patientService: PatientService) {
@@ -32,18 +32,31 @@ export class PatientTableComponent implements OnInit {
     // Get patients from patient service
     this.patientService.getPatients()
       .subscribe(patients => {
-        this.patientRecords = new MatTableDataSource(patients);
+        // Update data table
+        this.patientRecords.data = patients;
+
+        // Paginator
         this.patientRecords.paginator = this.paginator;
+
+        // Sorting
         this.patientRecords.sort = this.sort;
+
+        // Set filter by first or last name
+        this.patientRecords.filterPredicate =
+          (pat: Patient, filter: string) => pat.firstName.toLowerCase().startsWith(filter) || pat.lastName.toLowerCase().startsWith(filter);
+
       }, error => console.error(error));
 
-    // Retry every 5in case of gateway timeout 504 (backend server still initiaiizing)
-    // show loading message with circle animation 
+    // ADD: Retry every 5 secs after gateway timeout error 504 (backend server still initiaiizing)
   }
-
 
   onFileUpload() {
     // update table after upload
     this.getPatients();
+  }
+
+  applyFilter(event: Event) {
+    const filterValue: string = (event.target as HTMLInputElement).value;
+    this.patientRecords.filter = filterValue.trim().toLowerCase();
   }
 }

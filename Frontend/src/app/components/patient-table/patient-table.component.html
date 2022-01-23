@@ -1,7 +1,16 @@
 <patient-file-upload (fileUpload)="onFileUpload()"></patient-file-upload>
 
+<mat-form-field appearance="standard">
+  <mat-label>Filter by name</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="John">
+</mat-form-field>
+
 <table mat-table [dataSource]="patientRecords" matSort>
   <!-- ID -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+    <td mat-cell *matCellDef="let patient"> {{patient.id}} </td>
+  </ng-container>
   <!-- First Name -->
   <ng-container matColumnDef="firstName">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> First </th>
@@ -28,6 +37,11 @@
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+
+  <!-- No data row -->
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">No data found</td>
+  </tr>
 </table>
 
 <mat-paginator [pageSizeOptions]="[10, 25, 100]" aria-label="Select page of patient records"></mat-paginator>
