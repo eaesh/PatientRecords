@@ -29,3 +29,5 @@
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let row; columns: columns;"></tr>
 </table>
+
+<mat-paginator [pageSizeOptions]="[10, 25, 100]" aria-label="Select page of patient records"></mat-paginator>
