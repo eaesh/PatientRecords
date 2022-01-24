@@ -15,7 +15,12 @@
       "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
       "DisplayName": "Miscellaneous Files",
       "ColorIndex": -1
+    },
+    "d398a1ce-c1e1-4ec5-87c9-2e6bcf659af2": {
+      "ProjectGuid": "d398a1ce-c1e1-4ec5-87c9-2e6bcf659af2",
+      "DisplayName": "Backend.Tests",
+      "ColorIndex": 2
     }
   },
-  "NextColorIndex": 2
+  "NextColorIndex": 3
 }

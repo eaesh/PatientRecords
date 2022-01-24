@@ -55,7 +55,7 @@ export class PatientTableComponent implements OnInit {
 
       }, error => console.error(error));
 
-    // ADD: Retry every 5 secs after gateway timeout error 504 (backend server still initiaiizing)
+    // ADD: Retry every 5 secs after gateway timeout error 504 (backend server still initiailizing)
   }
 
   onFileUpload() {
