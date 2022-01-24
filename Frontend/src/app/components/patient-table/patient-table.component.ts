@@ -72,15 +72,16 @@ export class PatientTableComponent implements OnInit {
 
     if (patient.isEdit) {   // 'Done' is clicked
 
-      // Validation on record, validate date object in table input
-      // refresh table without saving
+      // ADD: Validation on birthday input in table
 
       // Update request for patient
       this.patientService.updatePatient(patient)
         .subscribe(() => {
-          // Refresh table
-          console.log('refresh')
-        }, error => console.error(error));
+        }, error => {
+          console.error(error);
+          // refresh table to revert
+          this.getPatients();
+        });
     }
 
     patient.isEdit = !patient.isEdit;

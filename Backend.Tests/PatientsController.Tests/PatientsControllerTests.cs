@@ -121,6 +121,129 @@ namespace Backend.PatientsController.Tests
             }
         }
 
+        /// <summary>
+        /// PatientsController.PutPatient() fails due to incomplete record
+        /// </summary>
+        [Fact]
+        public async Task PutPatient_IncompleteRecord()
+        {
+            // Arrange
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+            _context.Patients.Add(new Patient
+            {
+                FirstName = "Foo",
+                LastName = "Bar",
+                Birthday = DateTime.Parse("2000-01-01"),
+                Gender = Gender.Male
+            });
+            _context.SaveChanges();
+
+
+            using (var context = BuildDB())
+            {
+                // Act
+                var controller = BuildController(context);
+                var result = await controller.PutPatient(1, "Foo,Bar,2000-20-10");
+
+                // Assert
+                ObjectResult objectResult = Assert.IsType<BadRequestObjectResult>(result);
+                Assert.StartsWith("Incomplete record", objectResult.Value.ToString());
+            }
+        }
+
+
+        /// <summary>
+        /// PatientsController.PutPatient() fails at invalid birthday 
+        /// </summary>
+        [Fact]
+        public async Task PutPatient_InvalidBirthday()
+        {
+            // Arrange
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+            _context.Patients.Add(new Patient
+            {
+                FirstName = "Foo",
+                LastName = "Bar",
+                Birthday = DateTime.Parse("2000-01-01"),
+                Gender = Gender.Male
+            });
+            _context.SaveChanges();
+
+
+            using (var context = BuildDB())
+            {
+                // Act
+                var controller = BuildController(context);
+                var result = await controller.PutPatient(1, "Foo,Bar,2000-20-10,M");
+
+                // Assert
+                ObjectResult objectResult = Assert.IsType<BadRequestObjectResult>(result);
+                Assert.StartsWith("Invalid birthday", objectResult.Value.ToString());
+            }
+        }
+
+        /// <summary>
+        /// PatientsController.PutPatient() fails at invalid gender 
+        /// </summary>
+        [Fact]
+        public async Task PutPatient_InvalidGender()
+        {
+            // Arrange
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+            _context.Patients.Add(new Patient
+            {
+                FirstName = "Foo",
+                LastName = "Bar",
+                Birthday = DateTime.Parse("2000-01-01"),
+                Gender = Gender.Male
+            });
+            _context.SaveChanges();
+
+
+            using (var context = BuildDB())
+            {
+                // Act
+                var controller = BuildController(context);
+                var result = await controller.PutPatient(1, "Foo,Bar,2000-01-01,X");
+
+                // Assert
+                ObjectResult objectResult = Assert.IsType<BadRequestObjectResult>(result);
+                Assert.StartsWith("Invalid gender", objectResult.Value.ToString());
+            }
+        }
+
         #endregion
+
+        #region PatientsController.UploadPatientsFile
+
+        /// <summary>
+        /// PatientsController.UploadPatientsFile() adds multiple patients
+        /// </summary>
+        [Fact]
+        public async Task UploadPatientsFile_AddMultiplePatients()
+        {
+            // Arrange
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+
+
+            using (var context = BuildDB())
+            {
+                // Act
+                var controller = BuildController(context);
+                string file = "Clark,Kent,1984-02-29,M\nDiana, Prince, 1976 - 03 - 22, F\nTony, Stark, 1970 - 05 - 29, M\nCarol, Denvers, 1968 - 04 - 24, F";
+                var result = await controller.UploadPatientsFile(file);
+
+                // Assert
+                Assert.IsType<OkResult>(result);
+                Assert.True(context.Patients.Count() == 4);
+            }
+        }
+
+        #endregion
+
     }
 }

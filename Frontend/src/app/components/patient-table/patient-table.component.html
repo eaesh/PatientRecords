@@ -1,4 +1,4 @@
-<patient-file-upload (fileUpload)="onFileUpload()"></patient-file-upload>
+<patient-file-upload class="fileUpload" (fileUpload)="onFileUpload()"></patient-file-upload>
 
 <mat-form-field appearance="standard">
   <mat-label>Filter by name</mat-label>
@@ -68,9 +68,9 @@
 
   <!-- Edit Button -->
   <ng-container matColumnDef="isEdit">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Edit </th>
+    <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let patient">
-      <button (click)="editRow(patient)"> {{ patient.isEdit ? "Done" : "Edit" }} </button>
+      <button mat-button color="primary" (click)="editRow(patient)"> {{ patient.isEdit ? "Done" : "Edit" }} </button>
     </td>
   </ng-container>
 

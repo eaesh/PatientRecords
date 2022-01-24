@@ -63,7 +63,7 @@ namespace Backend.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex.Message);
             }
 
             return Ok();
@@ -116,14 +116,14 @@ namespace Backend.Controllers
             if (record.Length < 4)
             {
                 // Incomplete record
-                throw new ArgumentException("Incomplete record");
+                throw new ArgumentException("Incomplete record", patientRecord);
             }
 
             // Transform record
 
             // Birthday
             if (!DateTime.TryParse(record[2], out DateTime birthday))
-                throw new ArgumentException("Invalid birthday");
+                throw new ArgumentException("Invalid birthday", patientRecord);
 
             // Gender
             Gender gender;
@@ -132,7 +132,7 @@ namespace Backend.Controllers
             else if (record[3].Trim() == "F")
                 gender = Gender.Female;
             else
-                throw new ArgumentException("Invalid gender");
+                throw new ArgumentException("Invalid gender", patientRecord);
 
             return new Patient
             {
