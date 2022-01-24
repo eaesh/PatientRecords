@@ -72,8 +72,6 @@ export class PatientTableComponent implements OnInit {
 
     if (patient.isEdit) {   // 'Done' is clicked
 
-      // ADD: Validation on birthday input in table
-
       // Update request for patient
       this.patientService.updatePatient(patient)
         .subscribe(() => {
