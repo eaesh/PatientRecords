@@ -25,8 +25,6 @@ export class PatientFileUpload implements OnInit {
 
   //handle file upload event
   onFileInput(event: any) {
-    // limit file type
-    // limit number of files
     const file: File = event.target.files.item(0);
 
     // read file

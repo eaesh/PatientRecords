@@ -1,5 +1,5 @@
 
 <button mat-raised-button color="primary" (click)="fileInput.click()">
   <span>Upload File</span>
-  <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
+  <input #fileInput type="file" accept=".csv" (change)="onFileInput($event)" style="display:none;" />
 </button>
