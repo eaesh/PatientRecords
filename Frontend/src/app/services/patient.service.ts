@@ -18,9 +18,20 @@ export class PatientService {
     return this.http.get<Patient[]>(this.patientsUrl);
   }
 
-  uploadPatientsFile(file: string): Observable<unknown> {
-    console.log(file)
+  updatePatient(patient: Patient) {
+    const record: string =
+      [patient.firstName, patient.lastName, patient.birthday, patient.gender.substring(0, 1)].join(',');
 
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.put(this.patientsUrl + "/" + patient.id, JSON.stringify(record), httpOptions)
+  }
+
+  uploadPatientsFile(file: string): Observable<unknown> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

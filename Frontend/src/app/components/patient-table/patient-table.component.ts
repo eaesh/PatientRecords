@@ -18,8 +18,16 @@ export class PatientTableComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  columns: string[] = ['id', 'firstName', 'lastName', 'birthday', 'gender'] // order of columns displayed on table
   patientRecords: MatTableDataSource<Patient> = new MatTableDataSource<Patient>();   // data source for table
+  columns: string[] = ['id', 'firstName', 'lastName', 'birthday', 'gender', 'isEdit'] // order of columns displayed on table
+  genders: string[] = ['Male', 'Female']
+  tableSchema: { [key: string]: string; } = {
+    'firstName': 'text',
+    'lastName': 'text',
+    'birthday': 'text',
+    'gender': 'text',
+    'isEdit': 'isEdit'
+  }
 
   constructor(private patientService: PatientService) {
   }
@@ -58,5 +66,23 @@ export class PatientTableComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue: string = (event.target as HTMLInputElement).value;
     this.patientRecords.filter = filterValue.trim().toLowerCase();
+  }
+
+  editRow(patient: Patient) {
+
+    if (patient.isEdit) {   // 'Done' is clicked
+
+      // Validation on record, validate date object in table input
+      // refresh table without saving
+
+      // Update request for patient
+      this.patientService.updatePatient(patient)
+        .subscribe(() => {
+          // Refresh table
+          console.log('refresh')
+        }, error => console.error(error));
+    }
+
+    patient.isEdit = !patient.isEdit;
   }
 }

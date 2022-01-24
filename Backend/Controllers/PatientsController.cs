@@ -45,45 +45,25 @@ namespace Backend.Controllers
         /// <param name="patient">Patient record</param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPatient(int id, Patient patient)
+        public async Task<IActionResult> PutPatient(int id, [FromBody]string patientRecord)
         {
-            if (id != patient.Id)
+            // ID exists
+            if (!_context.Patients.Any(p => p.Id == id))
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(patient).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PatientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                Patient patient = TransformPatient(patientRecord);
+                patient.Id = id;
+                _context.Entry(patient).State = EntityState.Modified;
 
-            return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> PostPatients(List<Patient> patients)
-        {
-            try
-            {
-                _context.Patients.AddRange(patients);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-
+                throw;
             }
 
             return Ok();
@@ -99,39 +79,9 @@ namespace Backend.Controllers
             {
                 // Iterate through records
                 foreach (string rec in records)
-                {
-                    // Retrieve values from record
-                    string[] record = rec.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(r => r.Trim()).ToArray();
-                    if (record.Length < 4)
-                    {
-                        // Incomplete record
-                        throw new ArgumentException("Incomplete record");
-                    }
-
-                    // Transform record
-
-                    // Birthday
-                    if (!DateTime.TryParse(record[2], out DateTime birthday))
-                        throw new ArgumentException("Invalid birthday");
-
-                    // Gender
-                    Gender gender;
-                    if (record[3].Trim() == "M")
-                        gender = Gender.Male;
-                    else if (record[3].Trim() == "F")
-                        gender = Gender.Female;
-                    else
-                        throw new ArgumentException("Invalid gender");
-                    
-                    // Add to database
-                    _context.Patients.Add(new Patient
-                    {
-                        FirstName = record[0],
-                        LastName = record[1],
-                        Birthday = birthday,
-                        Gender = gender
-                    });
+                {                    
+                    // Transform and add to database
+                    _context.Patients.Add(TransformPatient(rec));
                 }
 
                 // Save context
@@ -143,26 +93,6 @@ namespace Backend.Controllers
             }
 
             return Ok();
-        }
-
-        /// <summary>
-        /// Delete patient by id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePatient(int id)
-        {
-            var patient = await _context.Patients.FindAsync(id);
-            if (patient == null)
-            {
-                return NotFound();
-            }
-
-            _context.Patients.Remove(patient);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         /// <summary>
@@ -178,9 +108,41 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-        private bool PatientExists(long id)
+        private Patient TransformPatient(string patientRecord)
         {
-            return _context.Patients.Any(e => e.Id == id);
+            // Retrieve values from record
+            string[] record = patientRecord.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(r => r.Trim()).ToArray();
+            if (record.Length < 4)
+            {
+                // Incomplete record
+                throw new ArgumentException("Incomplete record");
+            }
+
+            // Transform record
+
+            // Birthday
+            if (!DateTime.TryParse(record[2], out DateTime birthday))
+                throw new ArgumentException("Invalid birthday");
+
+            // Gender
+            Gender gender;
+            if (record[3].Trim() == "M")
+                gender = Gender.Male;
+            else if (record[3].Trim() == "F")
+                gender = Gender.Female;
+            else
+                throw new ArgumentException("Invalid gender");
+
+            return new Patient
+            {
+                FirstName = record[0],
+                LastName = record[1],
+                Birthday = birthday,
+                Gender = gender
+            };
+
+            // ADD: include patient record info in thrown exception
         }
     }
 }

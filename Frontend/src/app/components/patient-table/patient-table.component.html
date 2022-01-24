@@ -11,28 +11,67 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
     <td mat-cell *matCellDef="let patient"> {{patient.id}} </td>
   </ng-container>
+
   <!-- First Name -->
   <ng-container matColumnDef="firstName">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> First </th>
-    <td mat-cell *matCellDef="let patient"> {{patient.firstName}} </td>
+    <td mat-cell *matCellDef="let patient">
+      <div *ngIf="patient.isEdit">
+        <mat-form-field>
+          <input [type]="tableSchema.firstName" matInput [(ngModel)]="patient.firstName">
+        </mat-form-field>
+      </div>
+      <div *ngIf="!patient.isEdit"> {{patient.firstName}} </div>
+    </td>
   </ng-container>
 
   <!-- Last Name -->
   <ng-container matColumnDef="lastName">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Last </th>
-    <td mat-cell *matCellDef="let patient"> {{patient.lastName}} </td>
+    <td mat-cell *matCellDef="let patient">
+      <div *ngIf="patient.isEdit">
+        <mat-form-field>
+          <input [type]="tableSchema.lastName" matInput [(ngModel)]="patient.lastName">
+        </mat-form-field>
+      </div>
+      <div *ngIf="!patient.isEdit"> {{patient.lastName}} </div>
+    </td>
   </ng-container>
 
   <!-- Birthday -->
   <ng-container matColumnDef="birthday">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Birthday (yyyy-mm-dd) </th>
-    <td mat-cell *matCellDef="let patient"> {{patient.birthday}} </td>
+    <td mat-cell *matCellDef="let patient">
+      <div *ngIf="patient.isEdit">
+        <mat-form-field>
+          <input [type]="tableSchema.birthday" matInput [(ngModel)]="patient.birthday">
+        </mat-form-field>
+      </div>
+      <div *ngIf="!patient.isEdit"> {{patient.birthday}} </div>
+    </td>
   </ng-container>
 
   <!-- Gender -->
   <ng-container matColumnDef="gender">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
-    <td mat-cell *matCellDef="let patient"> {{patient.gender}} </td>
+    <td mat-cell *matCellDef="let patient">
+      <div *ngIf="patient.isEdit">
+        <mat-form-field>
+          <mat-select [(ngModel)]="patient.gender">
+            <mat-option *ngFor="let gen of genders" [value]="gen">{{gen}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div *ngIf="!patient.isEdit"> {{patient.gender}} </div>
+    </td>
+  </ng-container>
+
+  <!-- Edit Button -->
+  <ng-container matColumnDef="isEdit">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Edit </th>
+    <td mat-cell *matCellDef="let patient">
+      <button (click)="editRow(patient)"> {{ patient.isEdit ? "Done" : "Edit" }} </button>
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
@@ -40,7 +79,7 @@
 
   <!-- No data row -->
   <tr class="mat-row" *matNoDataRow>
-    <td class="mat-cell" colspan="4">No data found</td>
+    <td class="mat-cell" colspan="4">No data found. Please check filter or refresh page to update data.</td>
   </tr>
 </table>
 

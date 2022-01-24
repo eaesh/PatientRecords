@@ -4,4 +4,6 @@ export interface Patient {
   lastName: string;
   birthday: string;
   gender: string;
+
+  isEdit: boolean;    // for table view use only
 }
